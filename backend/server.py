@@ -3,10 +3,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
 from backend.assistant import answer_question
-from backend.context_store import ContextStore
+from backend.context_store import store as context_store
 
-
-context_store = ContextStore()
 
 
 class ExamRequestHandler(BaseHTTPRequestHandler):
