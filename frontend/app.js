@@ -32,9 +32,31 @@ askForm.addEventListener("submit", async (event) => {
 async function loadContext(userId) {
   try {
     const response = await fetch(`${API_BASE_URL}/api/context?user_id=${encodeURIComponent(userId)}`);
+    
+    if (!response.ok) throw new Error("Error en la petición");
+    
     const result = await response.json();
-    contextOutput.textContent = JSON.stringify(result, null, 2);
+    const contextItems = result.context || [];
+    
+    if (contextItems.length === 0) {
+      contextOutput.innerHTML = "<em>Sin contexto guardado para este usuario.</em>";
+      return;
+    }
+    
+    // Renderizamos las claves y valores dinámicamente
+    contextOutput.innerHTML = "";
+    contextItems.forEach(item => {
+      const p = document.createElement("p");
+      p.innerHTML = `<strong style="color: var(--primary-color)">${item.key}:</strong> ${item.value}`;
+      p.style.margin = "0.5rem 0";
+      contextOutput.appendChild(p);
+    });
+    
   } catch (error) {
-    contextOutput.textContent = "El modulo CAG aun no esta disponible.";
+    contextOutput.innerHTML = "<em>El modulo CAG aún no está disponible o hubo un error.</em>";
   }
 }
+
+// Cargar el contexto del usuario inicial apenas cargue la página
+const initialUserId = document.querySelector("#user-id").value;
+loadContext(initialUserId);
